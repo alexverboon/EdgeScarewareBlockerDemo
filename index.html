@@ -1,327 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Scareware Simulation – TEST ONLY</title>
-  <style>
-    :root{
-      --bg:#0b0f14; --panel:#10151d; --accent:#ff3b3b; --accent2:#ffc107; --text:#e8eef6; --muted:#9fb3c8;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif;}
-    .wrap{max-width:980px;margin:0 auto;padding:24px}
-    header{position:sticky;top:0;background:linear-gradient(90deg,var(--accent),#ff6b6b);color:#fff;border-bottom:4px solid #9b0000;z-index:10}
-    header .inner{display:flex;align-items:center;gap:16px;max-width:980px;margin:0 auto;padding:14px 24px}
-    .badge{font-weight:800;letter-spacing:.08em;border:2px solid #fff;padding:4px 8px;border-radius:8px}
-    .alert-banner{background:#1a0f0f;padding:12px 16px;border:2px solid var(--accent);border-left-width:10px;margin:16px 0;border-radius:12px;box-shadow:0 4px 18px rgba(255,59,59,.35)}
-    .alert-banner h2{margin:0 0 6px;font-size:1.1rem;color:#ffdada}
-    .controls{background:var(--panel);border:1px solid #233142;border-radius:16px;padding:16px;display:grid;gap:12px}
-    .row{display:flex;flex-wrap:wrap;gap:12px}
-    button{cursor:pointer;border:0;border-radius:12px;padding:12px 16px;font-weight:700}
-    .start{background:var(--accent);color:#fff;box-shadow:0 6px 24px rgba(255,59,59,.35)}
-    .stop{background:#243447;color:#fff}
-    .ghost{background:#18222e;color:var(--muted)}
-    .pill{display:inline-flex;align-items:center;gap:6px;background:#14202b;color:#b0c6dc;border:1px solid #233142;border-radius:999px;padding:6px 10px;margin-right:8px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
-    .card{background:var(--panel);border:1px solid #233142;border-radius:16px;padding:16px}
-    .scan{background:#0f1720;border:1px solid #1f2c3b;border-radius:16px;padding:16px}
-    .bar{height:14px;border-radius:999px;background:#0c1219;border:1px solid #18222e;overflow:hidden}
-    .bar>div{height:100%;width:0;background:linear-gradient(90deg,var(--accent2),#ff6);transition:width .2s ease}
-    .blink{animation:blink 1s infinite}
-    @keyframes blink{50%{opacity:.35}}
-    .danger-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(15,0,0,.82);backdrop-filter:blur(1px);z-index:1000}
-    .modal{max-width:740px;background:#190909;border:3px solid var(--accent);border-radius:20px;color:#ffdada;box-shadow:0 20px 80px rgba(0,0,0,.7);padding:20px}
-    .modal h3{margin:0 0 8px}
-    .modal p{margin:0 0 12px}
-    .modal .cta{display:flex;gap:10px;flex-wrap:wrap}
-    .watermark{position:fixed;inset:auto 12px 12px auto;background:#000a;color:#fff;border:1px dashed #f66;padding:6px 8px;border-radius:10px;font-weight:800;z-index:9999;}
-    .countdown{font-weight:900;font-size:2rem;color:#fff;background:#3a0a0a;border:2px solid #8b0000;border-radius:14px;padding:8px 12px;display:inline-block}
-    .marquee{overflow:hidden;white-space:nowrap;border-top:2px solid #320000;border-bottom:2px solid #320000;padding:6px 0;margin-top:12px}
-    .marquee span{display:inline-block;padding-left:100%;animation:scroll 14s linear infinite}
-    @keyframes scroll{to{transform:translateX(-100%)}}
-    .footer-note{font-size:.9rem;color:#92a6bb}
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Scareware Simulation – Launcher</title>
+<style>
+  :root{ --bg:#0b0f14; --panel:#10151d; --accent:#ff3b3b; --accent2:#ffc107; --text:#e8eef6; --muted:#9fb3c8; }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif;}
+  .wrap{max-width:980px;margin:0 auto;padding:24px}
+  header{position:sticky;top:0;background:linear-gradient(90deg,var(--accent),#ff6b6b);color:#fff;border-bottom:4px solid #9b0000;z-index:10}
+  header .inner{display:flex;align-items:center;gap:16px;max-width:980px;margin:0 auto;padding:14px 24px}
+  .badge{font-weight:800;letter-spacing:.08em;border:2px solid #fff;padding:4px 8px;border-radius:8px}
+  .alert-banner{background:#1a0f0f;padding:12px 16px;border:2px solid var(--accent);border-left-width:10px;margin:16px 0;border-radius:12px;box-shadow:0 4px 18px rgba(255,59,59,.35)}
+  .alert-banner h2{margin:0 0 6px;font-size:1.1rem;color:#ffdada}
+  .controls{background:var(--panel);border:1px solid #233142;border-radius:16px;padding:16px;display:grid;gap:12px}
+  .row{display:flex;flex-wrap:wrap;gap:12px}
+  button{cursor:pointer;border:0;border-radius:12px;padding:12px 16px;font-weight:700}
+  .start{background:var(--accent);color:#fff;box-shadow:0 6px 24px rgba(255,59,59,.35)}
+  .ghost{background:#18222e;color:var(--muted)}
+  .pill{display:inline-flex;align-items:center;gap:6px;background:#14202b;color:#b0c6dc;border:1px solid #233142;border-radius:999px;padding:6px 10px;margin-right:8px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+  .card{background:var(--panel);border:1px solid #233142;border-radius:16px;padding:16px}
+  .footer-note{font-size:.9rem;color:#92a6bb}
+  .fake-url{font-family:ui-monospace,monospace;background:#0e141b;border:1px solid #1f2c3b;border-radius:10px;padding:8px 10px;color:#b7c9db;overflow:auto}
+</style>
 </head>
 <body>
-  <header>
-    <div class="inner">
-      <div class="badge">TEST ONLY</div>
-      <div>
-        <div style="font-weight:800;font-size:1.1rem;letter-spacing:.02em">Scareware Simulation Page</div>
-        <div style="opacity:.9">For internal security testing of browser protections (no real malware).</div>
-      </div>
-    </div>
-  </header>
-
-  <div class="wrap">
-    <div class="alert-banner">
-      <h2 class="blink">⚠ SECURITY WARNING (SIMULATED)</h2>
-      <div>This page intentionally mimics common <b>scareware patterns</b> to test Microsoft Edge protections.
-           It does <u>not</u> download software, collect data, or contact external servers.</div>
-    </div>
-
-    <div class="controls">
-      <div class="row">
-        <button id="start" class="start">▶ Start Simulation</button>
-        <button id="stop" class="stop" disabled>■ Stop Simulation</button>
-        <button id="safeToggle" class="ghost" title="Toggles aggressive behaviors like alert loops / history push">Safe Mode: <span id="safeState">OFF</span></button>
-      </div>
-
-      <!-- Checkbox grid with tooltips -->
-      <div class="grid">
-        <label class="pill" title="Repeatedly triggers native JavaScript alert() pop-ups to simulate scareware spam messages.">
-          <input type="checkbox" id="cbAlerts" checked> Native alert loop
-        </label>
-        <label class="pill" title="Shows a 'Leave site?' prompt when closing or reloading, imitating pages that try to block tab closure.">
-          <input type="checkbox" id="cbBeforeUnload" checked> beforeunload trap
-        </label>
-        <label class="pill" title="Requests browser fullscreen to hide UI controls, mimicking pages that try to increase pressure.">
-          <input type="checkbox" id="cbFullscreen"> Request fullscreen
-        </label>
-        <label class="pill" title="Pushes fake history states so the back button needs multiple presses, simulating 'sticky' scam pages.">
-          <input type="checkbox" id="cbHistory" checked> Back-button friction
-        </label>
-        <label class="pill" title="Plays a repeating alarm-like beep sound to simulate audio scare tactics.">
-          <input type="checkbox" id="cbBeep" checked> Alarm sound
-        </label>
-        <label class="pill" title="Disables right-click context menus to limit user options like Inspect or Save.">
-          <input type="checkbox" id="cbContext" checked> Block right-click
-        </label>
-      </div>
-
-      <div class="footer-note">Tip: Use <code>?safe=1</code> in the URL to start in Safe Mode (no aggressive patterns). Press <b>ESC</b> at any time to stop.</div>
-    </div>
-
-    <!-- Help / Feature Guide -->
-    <div class="card" style="margin-top:8px">
-      <h4>Checkbox Feature Guide</h4>
-      <ul style="margin:0; padding-left:18px">
-        <li><b>Native alert loop:</b> Shows repeated popup alerts to simulate scareware harassment.</li>
-        <li><b>beforeunload trap:</b> Prompts the user before leaving, imitating pages that try to block tab closure.</li>
-        <li><b>Request fullscreen:</b> Expands the page to full screen to hide the address bar and controls.</li>
-        <li><b>Back-button friction:</b> Pushes fake history states so the browser back button needs multiple presses.</li>
-        <li><b>Alarm sound:</b> Plays a repeating alarm to manufacture urgency.</li>
-        <li><b>Block right-click:</b> Disables right-click menus to reduce user options.</li>
-      </ul>
-    </div>
-
-    <div class="card" style="margin-top:12px">
-      <h3>Simulated Scan</h3>
-      <div class="scan">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
-          <div class="countdown" id="countdown">01:00</div>
-          <div><b>Threats Detected:</b> <span id="threatCount">0</span> (SIMULATED)</div>
-        </div>
-        <div class="bar"><div id="barFill"></div></div>
-        <div class="marquee"><span id="marqueeText">Scanning system files… • Checking registry… • Enumerating startup entries… • Inspecting browser data… • This is a simulation for testing only.</span></div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:12px">
-      <h3>Purpose & Safety</h3>
-      <ul>
-        <li><b>Purpose:</b> Evaluate browser anti-scam/scareware UX (popups, unload traps, audio, fullscreen) in a controlled environment.</li>
-        <li><b>No exfiltration, downloads, or external calls.</b> All behavior is client-side.</li>
-        <li><b>Exit:</b> Click <i>Stop Simulation</i>, press <b>ESC</b>, or close the tab. Safe Mode disables aggressive features.</li>
-        <li><b>Do not impersonate vendors or display real phone numbers.</b> This page is intentionally generic.</li>
-      </ul>
+<header>
+  <div class="inner">
+    <div class="badge">LAUNCHER</div>
+    <div>
+      <div style="font-weight:800;font-size:1.1rem;">Scareware Simulation Launcher</div>
+      <div style="opacity:.9">Launches a new dynamically generated simulation tab</div>
     </div>
   </div>
+</header>
 
-  <div class="danger-overlay" id="overlay" aria-modal="true" role="dialog">
-    <div class="modal">
-      <h3>Critical System Alert (SIMULATED)</h3>
-      <p>Your system may be infected. Immediate action is required to prevent data loss.</p>
-      <p><b>Do NOT</b> call any numbers you see on untrusted sites. This is a test page.</p>
-      <div class="cta">
-        <button id="btnResolve" class="start">Resolve Now</button>
-        <button id="btnDismiss" class="stop">Dismiss</button>
-      </div>
-    </div>
+<div class="wrap">
+  <div class="alert-banner">
+    <h2 class="blink">⚙ Launcher</h2>
+    <div>Configure your simulation below. Clicking <b>Start Simulation</b> opens a <i>new tab</i> with a fresh HTML file that auto-starts the simulation.</div>
   </div>
 
-  <div class="watermark">SCAM SIMULATION – TEST ONLY</div>
+  <div class="controls">
+    <div class="row">
+      <button id="start" class="start">▶ Start Simulation (new tab)</button>
+      <button id="safeToggle" class="ghost" title="Toggles aggressive behaviors">Safe Mode: <span id="safeState">OFF</span></button>
+    </div>
 
-  <script>
-  (function(){
-    const qs = (s)=>document.querySelector(s);
-    const startBtn = qs('#start');
-    const stopBtn  = qs('#stop');
-    const safeBtn  = qs('#safeToggle');
-    const safeState = qs('#safeState');
-    const overlay = qs('#overlay');
+    <div class="grid">
+      <label class="pill" title="Repeated pop-ups to simulate scareware spam.">
+        <input type="checkbox" id="cbAlerts" checked> Native alert loop
+      </label>
+      <label class="pill" title="Warns on tab close or reload.">
+        <input type="checkbox" id="cbBeforeUnload" checked> beforeunload trap
+      </label>
+      <label class="pill" title="Requests fullscreen to hide browser UI.">
+        <input type="checkbox" id="cbFullscreen"> Request fullscreen
+      </label>
+      <label class="pill" title="Pushes fake history states to frustrate back navigation.">
+        <input type="checkbox" id="cbHistory" checked> Back-button friction
+      </label>
+      <label class="pill" title="Repeating alarm-like beep.">
+        <input type="checkbox" id="cbBeep" checked> Alarm sound
+      </label>
+      <label class="pill" title="Blocks right-click menu.">
+        <input type="checkbox" id="cbContext" checked> Block right-click
+      </label>
+    </div>
 
-    const cbAlerts = qs('#cbAlerts');
-    const cbBeforeUnload = qs('#cbBeforeUnload');
-    const cbFullscreen = qs('#cbFullscreen');
-    const cbHistory = qs('#cbHistory');
-    const cbBeep = qs('#cbBeep');
-    const cbContext = qs('#cbContext');
+    <div class="footer-note">Safe Mode disables aggressive features automatically in the new page.</div>
+  </div>
 
-    const barFill = qs('#barFill');
-    const threatCount = qs('#threatCount');
-    const countdownEl = qs('#countdown');
+  <div class="card" style="margin-top:8px">
+    <h4>Checkbox Feature Guide</h4>
+    <ul>
+      <li><b>Native alert loop:</b> Simulates pop-up harassment.</li>
+      <li><b>beforeunload trap:</b> Blocks easy exit via close/reload.</li>
+      <li><b>Request fullscreen:</b> Hides browser UI.</li>
+      <li><b>Back-button friction:</b> Makes back navigation harder.</li>
+      <li><b>Alarm sound:</b> Urgent audio loop.</li>
+      <li><b>Block right-click:</b> Disables context menu.</li>
+    </ul>
+  </div>
 
-    let isRunning = false;
-    let safeMode = new URLSearchParams(location.search).get('safe') === '1';
-    let alertTimer = null, beepTimer = null, scanTimer = null, countdownTimer = null;
-    let beforeUnloadHandler = null, popHandler = null, contextHandler = null;
-    let audioCtx = null;
+  <div class="card" style="margin-top:12px">
+    <h3>Preview: Random URL</h3>
+    <div id="fakeUrlPreview" class="fake-url">—</div>
+  </div>
+</div>
 
-    function setSafeMode(v){
-      safeMode = !!v;
-      safeState.textContent = safeMode ? 'ON' : 'OFF';
+<script>
+(function(){
+  const qs = (s)=>document.querySelector(s);
+  const cbAlerts = qs('#cbAlerts'), cbBeforeUnload = qs('#cbBeforeUnload'),
+        cbFullscreen = qs('#cbFullscreen'), cbHistory = qs('#cbHistory'),
+        cbBeep = qs('#cbBeep'), cbContext = qs('#cbContext');
+  const fakeUrlPreview = qs('#fakeUrlPreview'), safeBtn = qs('#safeToggle'), safeState = qs('#safeState');
 
-      // Auto-toggle aggressive feature checkboxes
-      if (safeMode) {
-        cbAlerts.checked = false;
-        cbBeforeUnload.checked = false;
-        cbHistory.checked = false;
+  let safeMode = false;
+  function makeRandomUrl(){
+    const subs = ['security-check','system-alert','browser-scan','malware-protect','safety-audit'];
+    const paths = ['scan','verify','protect','check','inspect'];
+    const host = subs[Math.floor(Math.random()*subs.length)]+'.example.com';
+    return `https://${host}/${paths[Math.floor(Math.random()*paths.length)]}?id=${Math.floor(Math.random()*1e6)}`;
+  }
+  function refreshPreview(){ fakeUrlPreview.textContent = makeRandomUrl(); }
+  refreshPreview();
 
-        // If toggled during a running session, immediately disable aggressive behaviors
-        if (isRunning) {
-          stopAlerts();
-          disableBeforeUnload();
-          disableHistoryTrap();
-        }
-      } else {
-        cbAlerts.checked = true;
-        cbBeforeUnload.checked = true;
-        cbHistory.checked = true;
-
-        // If toggled off during a running session, re-enable behaviors per current checkboxes
-        if (isRunning) {
-          scheduleAlerts();
-          enableBeforeUnload();
-          enableHistoryTrap();
-        }
-      }
+  function setSafeMode(v){
+    safeMode = !!v;
+    safeState.textContent = safeMode ? 'ON' : 'OFF';
+    if(safeMode){
+      cbAlerts.checked = false;
+      cbBeforeUnload.checked = false;
+      cbHistory.checked = false;
+    } else {
+      cbAlerts.checked = true;
+      cbBeforeUnload.checked = true;
+      cbHistory.checked = true;
     }
-    setSafeMode(safeMode);
+  }
+  safeBtn.addEventListener('click',()=>setSafeMode(!safeMode));
 
-    safeBtn.addEventListener('click',()=>setSafeMode(!safeMode));
+  qs('#start').addEventListener('click',()=>{
+    const cfg = {
+      safeMode,
+      options:{
+        alerts: cbAlerts.checked,
+        beforeUnload: cbBeforeUnload.checked,
+        fullscreen: cbFullscreen.checked,
+        historyTrap: cbHistory.checked,
+        beep: cbBeep.checked,
+        contextBlock: cbContext.checked
+      },
+      displayUrl: makeRandomUrl(),
+      autoStart: true
+    };
+    const blob = new Blob([buildSimulationHtml(cfg)], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    window.open(url,'_blank','noopener');
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+  });
 
-    function startBeep(){
-      if(!cbBeep.checked) return;
-      audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
-      const beep = () => {
-        const o = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        o.type = 'square';
-        o.frequency.value = 880; // A5 alarm-like
-        g.gain.value = 0.05;
-        o.connect(g).connect(audioCtx.destination);
-        o.start();
-        setTimeout(()=>{o.stop(); o.disconnect();}, 300);
-      };
-      beep();
-      beepTimer = setInterval(beep, 2500);
+  function buildSimulationHtml(cfg){
+    const cfgStr = JSON.stringify(cfg).replace(/</g,'\\u003c');
+    return `<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Scareware Simulation – TEST ONLY</title>
+<style>
+  body{background:#0b0f14;color:#e8eef6;font-family:sans-serif;margin:0}
+  .fake-bar{display:flex;align-items:center;gap:8px;background:#0e141b;padding:8px 10px;color:#b7c9db;font-family:monospace}
+  .dot{width:10px;height:10px;border-radius:50%}
+  .wrap{padding:20px;max-width:980px;margin:auto}
+  .start{background:#ff3b3b;color:#fff;padding:8px 12px;border:none;border-radius:6px}
+  .stop{background:#243447;color:#fff;padding:8px 12px;border:none;border-radius:6px}
+</style>
+</head><body>
+<div class="fake-bar"><span class="dot" style="background:#ff5f56"></span><span class="dot" style="background:#ffbd2e"></span><span class="dot" style="background:#27c93f"></span>🔒 <span id="url"></span></div>
+<div class="wrap">
+  <button id="startBtn" class="start">▶ Start</button>
+  <button id="stopBtn" class="stop" disabled>■ Stop</button>
+  <div id="log" style="margin-top:1em;font-size:0.9rem;white-space:pre-wrap"></div>
+</div>
+<script>
+const cfg = ${cfgStr};
+document.getElementById('url').textContent = cfg.displayUrl;
+const log = document.getElementById('log');
+const startBtn = document.getElementById('startBtn'), stopBtn = document.getElementById('stopBtn');
+let running=false, alertTimer, beepTimer;
+function logMsg(m){ log.textContent += m+"\\n"; }
+function start(){
+  if(running) return; running=true; startBtn.disabled=true; stopBtn.disabled=false;
+  logMsg("Simulation started. SafeMode="+cfg.safeMode);
+  if(cfg.options.alerts && !cfg.safeMode){
+    alertTimer = setTimeout(function loop(){ alert("SIMULATED WARNING"); if(running) alertTimer=setTimeout(loop,1500); },1000);
+  }
+  if(cfg.options.beep){
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    function beep(){
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type="square"; o.frequency.value=880; g.gain.value=0.05;
+      o.connect(g).connect(ctx.destination); o.start(); setTimeout(()=>o.stop(),300);
     }
-    function stopBeep(){ if(beepTimer) clearInterval(beepTimer); beepTimer=null; }
-
-    function scheduleAlerts(){
-      if(!cbAlerts.checked) return;
-      if(safeMode) return; // safe mode disables native alert spam
-      const show = () => {
-        try{ alert('SIMULATED SECURITY WARNING: Your device may be infected. (This is a test).'); }catch(e){}
-        if(isRunning) alertTimer = setTimeout(show, 2800 + Math.random()*1500);
-      };
-      alertTimer = setTimeout(show, 1200);
-    }
-    function stopAlerts(){ if(alertTimer) clearTimeout(alertTimer); alertTimer=null; }
-
-    async function maybeFullscreen(){
-      if(!cbFullscreen.checked) return;
-      if (document.fullscreenElement) return;
-      try{ await document.documentElement.requestFullscreen(); }catch(e){}
-    }
-
-    function enableBeforeUnload(){
-      if(!cbBeforeUnload.checked) return;
-      if (beforeUnloadHandler) return;
-      beforeUnloadHandler = (e)=>{ if(!isRunning) return; e.preventDefault(); e.returnValue=''; return ''; };
-      window.addEventListener('beforeunload', beforeUnloadHandler);
-    }
-    function disableBeforeUnload(){ if(beforeUnloadHandler){ window.removeEventListener('beforeunload', beforeUnloadHandler); beforeUnloadHandler=null; } }
-
-    function enableHistoryTrap(){
-      if(!cbHistory.checked) return;
-      if(safeMode) return; // disable in safe mode
-      // Push some states to make back button require multiple presses
-      for(let i=0;i<6;i++) history.pushState({layer:i}, '', location.href);
-      if (!popHandler) {
-        popHandler = (e)=>{ if(isRunning) { history.pushState({trap:true}, '', location.href); overlay.style.display='flex'; } };
-        window.addEventListener('popstate', popHandler);
-      }
-    }
-    function disableHistoryTrap(){ if(popHandler){ window.removeEventListener('popstate', popHandler); popHandler=null; } }
-
-    function toggleContextMenu(disable){
-      const handler = (e)=> e.preventDefault();
-      if(disable && cbContext.checked){ document.addEventListener('contextmenu', handler); contextHandler = handler; }
-      else if(contextHandler){ document.removeEventListener('contextmenu', contextHandler); contextHandler=null; }
-    }
-
-    function openOverlay(){ overlay.style.display='flex'; }
-    function closeOverlay(){ overlay.style.display='none'; }
-
-    function startScan(){
-      let p=0, secs=60;
-      barFill.style.width='0%';
-      threatCount.textContent='0';
-      countdownEl.textContent='01:00';
-      scanTimer = setInterval(()=>{
-        if(!isRunning) return;
-        p = Math.min(100, p + (Math.random()*6+2));
-        barFill.style.width = p + '%';
-        if(Math.random()<.35) { threatCount.textContent = (+threatCount.textContent)+1; }
-        if(p>=100){ p=0; }
-      }, 300);
-      countdownTimer = setInterval(()=>{
-        if(!isRunning) return;
-        secs = Math.max(0, secs-1);
-        const m = String(Math.floor(secs/60)).padStart(2,'0');
-        const s = String(secs%60).padStart(2,'0');
-        countdownEl.textContent = `${m}:${s}`;
-        if(secs===0){ openOverlay(); secs=60; }
-      },1000);
-    }
-    function stopScan(){ if(scanTimer) clearInterval(scanTimer); scanTimer=null; if(countdownTimer) clearInterval(countdownTimer); countdownTimer=null; }
-
-    async function start(){
-      if(isRunning) return;
-      isRunning=true;
-      startBtn.disabled=true; stopBtn.disabled=false;
-      toggleContextMenu(true);
-      startScan();
-      scheduleAlerts();
-      enableBeforeUnload();
-      enableHistoryTrap();
-      startBeep();
-      await maybeFullscreen();
-      openOverlay();
-    }
-
-    function stop(){
-      isRunning=false;
-      startBtn.disabled=false; stopBtn.disabled=true;
-      stopAlerts(); stopBeep(); stopScan();
-      disableBeforeUnload(); disableHistoryTrap(); toggleContextMenu(false);
-      closeOverlay();
-      if (document.fullscreenElement) { document.exitFullscreen().catch(()=>{}); }
-      // Allow back navigation again by going back one if we created states
-      history.go(-3);
-    }
-
-    startBtn.addEventListener('click', start);
-    stopBtn.addEventListener('click', stop);
-    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') stop(); });
-    qs('#btnDismiss').addEventListener('click', ()=> closeOverlay());
-    qs('#btnResolve').addEventListener('click', ()=> openOverlay());
-  })();
-  </script>
+    beep(); beepTimer=setInterval(beep,2000);
+  }
+}
+function stop(){
+  running=false; startBtn.disabled=false; stopBtn.disabled=true;
+  clearTimeout(alertTimer); clearInterval(beepTimer);
+  logMsg("Simulation stopped.");
+}
+startBtn.onclick=start; stopBtn.onclick=stop;
+if(cfg.autoStart) start();
+<\/script>
+</body></html>`;
+  }
+})();
+</script>
 </body>
 </html>
-
