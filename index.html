@@ -68,15 +68,43 @@
         <button id="stop" class="stop" disabled>■ Stop Simulation</button>
         <button id="safeToggle" class="ghost" title="Toggles aggressive behaviors like alert loops / history push">Safe Mode: <span id="safeState">OFF</span></button>
       </div>
+
+      <!-- Checkbox grid with tooltips -->
       <div class="grid">
-        <label class="pill"><input type="checkbox" id="cbAlerts" checked> Native alert loop</label>
-        <label class="pill"><input type="checkbox" id="cbBeforeUnload" checked> beforeunload trap</label>
-        <label class="pill"><input type="checkbox" id="cbFullscreen"> Request fullscreen</label>
-        <label class="pill"><input type="checkbox" id="cbHistory" checked> Back-button friction</label>
-        <label class="pill"><input type="checkbox" id="cbBeep" checked> Alarm sound</label>
-        <label class="pill"><input type="checkbox" id="cbContext" checked> Block right‑click</label>
+        <label class="pill" title="Repeatedly triggers native JavaScript alert() pop-ups to simulate scareware spam messages.">
+          <input type="checkbox" id="cbAlerts" checked> Native alert loop
+        </label>
+        <label class="pill" title="Shows a 'Leave site?' prompt when closing or reloading, imitating pages that try to block tab closure.">
+          <input type="checkbox" id="cbBeforeUnload" checked> beforeunload trap
+        </label>
+        <label class="pill" title="Requests browser fullscreen to hide UI controls, mimicking pages that try to increase pressure.">
+          <input type="checkbox" id="cbFullscreen"> Request fullscreen
+        </label>
+        <label class="pill" title="Pushes fake history states so the back button needs multiple presses, simulating 'sticky' scam pages.">
+          <input type="checkbox" id="cbHistory" checked> Back-button friction
+        </label>
+        <label class="pill" title="Plays a repeating alarm-like beep sound to simulate audio scare tactics.">
+          <input type="checkbox" id="cbBeep" checked> Alarm sound
+        </label>
+        <label class="pill" title="Disables right-click context menus to limit user options like Inspect or Save.">
+          <input type="checkbox" id="cbContext" checked> Block right-click
+        </label>
       </div>
+
       <div class="footer-note">Tip: Use <code>?safe=1</code> in the URL to start in Safe Mode (no aggressive patterns). Press <b>ESC</b> at any time to stop.</div>
+    </div>
+
+    <!-- Help / Feature Guide -->
+    <div class="card" style="margin-top:8px">
+      <h4>Checkbox Feature Guide</h4>
+      <ul style="margin:0; padding-left:18px">
+        <li><b>Native alert loop:</b> Shows repeated popup alerts to simulate scareware harassment.</li>
+        <li><b>beforeunload trap:</b> Prompts the user before leaving, imitating pages that try to block tab closure.</li>
+        <li><b>Request fullscreen:</b> Expands the page to full screen to hide the address bar and controls.</li>
+        <li><b>Back-button friction:</b> Pushes fake history states so the browser back button needs multiple presses.</li>
+        <li><b>Alarm sound:</b> Plays a repeating alarm to manufacture urgency.</li>
+        <li><b>Block right-click:</b> Disables right-click menus to reduce user options.</li>
+      </ul>
     </div>
 
     <div class="card" style="margin-top:12px">
@@ -138,13 +166,38 @@
 
     let isRunning = false;
     let safeMode = new URLSearchParams(location.search).get('safe') === '1';
-    let alertTimer = null, beepTimer = null, marqueeTimer = null, scanTimer = null, countdownTimer = null;
+    let alertTimer = null, beepTimer = null, scanTimer = null, countdownTimer = null;
     let beforeUnloadHandler = null, popHandler = null, contextHandler = null;
     let audioCtx = null;
 
     function setSafeMode(v){
       safeMode = !!v;
       safeState.textContent = safeMode ? 'ON' : 'OFF';
+
+      // Auto-toggle aggressive feature checkboxes
+      if (safeMode) {
+        cbAlerts.checked = false;
+        cbBeforeUnload.checked = false;
+        cbHistory.checked = false;
+
+        // If toggled during a running session, immediately disable aggressive behaviors
+        if (isRunning) {
+          stopAlerts();
+          disableBeforeUnload();
+          disableHistoryTrap();
+        }
+      } else {
+        cbAlerts.checked = true;
+        cbBeforeUnload.checked = true;
+        cbHistory.checked = true;
+
+        // If toggled off during a running session, re-enable behaviors per current checkboxes
+        if (isRunning) {
+          scheduleAlerts();
+          enableBeforeUnload();
+          enableHistoryTrap();
+        }
+      }
     }
     setSafeMode(safeMode);
 
@@ -166,7 +219,6 @@
       beep();
       beepTimer = setInterval(beep, 2500);
     }
-
     function stopBeep(){ if(beepTimer) clearInterval(beepTimer); beepTimer=null; }
 
     function scheduleAlerts(){
@@ -178,7 +230,6 @@
       };
       alertTimer = setTimeout(show, 1200);
     }
-
     function stopAlerts(){ if(alertTimer) clearTimeout(alertTimer); alertTimer=null; }
 
     async function maybeFullscreen(){
@@ -189,10 +240,10 @@
 
     function enableBeforeUnload(){
       if(!cbBeforeUnload.checked) return;
+      if (beforeUnloadHandler) return;
       beforeUnloadHandler = (e)=>{ if(!isRunning) return; e.preventDefault(); e.returnValue=''; return ''; };
       window.addEventListener('beforeunload', beforeUnloadHandler);
     }
-
     function disableBeforeUnload(){ if(beforeUnloadHandler){ window.removeEventListener('beforeunload', beforeUnloadHandler); beforeUnloadHandler=null; } }
 
     function enableHistoryTrap(){
@@ -200,10 +251,11 @@
       if(safeMode) return; // disable in safe mode
       // Push some states to make back button require multiple presses
       for(let i=0;i<6;i++) history.pushState({layer:i}, '', location.href);
-      popHandler = (e)=>{ if(isRunning) { history.pushState({trap:true}, '', location.href); overlay.style.display='flex'; } };
-      window.addEventListener('popstate', popHandler);
+      if (!popHandler) {
+        popHandler = (e)=>{ if(isRunning) { history.pushState({trap:true}, '', location.href); overlay.style.display='flex'; } };
+        window.addEventListener('popstate', popHandler);
+      }
     }
-
     function disableHistoryTrap(){ if(popHandler){ window.removeEventListener('popstate', popHandler); popHandler=null; } }
 
     function toggleContextMenu(disable){
@@ -216,7 +268,7 @@
     function closeOverlay(){ overlay.style.display='none'; }
 
     function startScan(){
-      let p=0, t=0, secs=60;
+      let p=0, secs=60;
       barFill.style.width='0%';
       threatCount.textContent='0';
       countdownEl.textContent='01:00';
@@ -236,7 +288,6 @@
         if(secs===0){ openOverlay(); secs=60; }
       },1000);
     }
-
     function stopScan(){ if(scanTimer) clearInterval(scanTimer); scanTimer=null; if(countdownTimer) clearInterval(countdownTimer); countdownTimer=null; }
 
     async function start(){
@@ -269,8 +320,8 @@
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') stop(); });
     qs('#btnDismiss').addEventListener('click', ()=> closeOverlay());
     qs('#btnResolve').addEventListener('click', ()=> openOverlay());
-
   })();
   </script>
 </body>
 </html>
+
